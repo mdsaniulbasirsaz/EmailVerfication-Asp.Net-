@@ -1,0 +1,10 @@
+﻿@model EmailVerfication.Models.User
+
+<h2>Profile</h2>
+<div>
+    <h4>Name: @Model.FullName</h4>
+    <p>Email: @Model.Email</p>
+    <p>Status: @(Model.IsVerified ? "Verified" : "Not Verified")</p>
+    <a href="@Url.Action("Logout", "Account")">Logout</a>
+
+</div>
