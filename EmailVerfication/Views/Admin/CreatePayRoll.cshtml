@@ -1,0 +1,42 @@
+﻿@model EmailVerification.Models.PayRoll
+
+@{
+    ViewData["Title"] = "Create PayRoll";
+}
+
+<h2>Create PayRoll for @(Model.User?.FullName ?? "User not found")</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label for="BasicSalary">Basic Salary</label>
+        <input type="number" class="form-control" id="BasicSalary" name="BasicSalary" value="@Model.BasicSalary" required>
+    </div>
+
+    <div class="form-group">
+        <label for="Bonus">Bonus</label>
+        <input type="number" class="form-control" id="Bonus" name="Bonus" value="@Model.Bonus">
+    </div>
+
+    <div class="form-group">
+        <label for="Deductions">Deductions</label>
+        <input type="number" class="form-control" id="Deductions" name="Deductions" value="@Model.Deductions">
+    </div>
+
+    <div class="form-group">
+        <label for="TotalSalary">Total Salary</label>
+        <input type="number" class="form-control" id="TotalSalary" name="TotalSalary" value="@Model.TotalSalary" required>
+    </div>
+
+    <div class="form-group">
+        <label for="PayDate">Pay Date</label>
+        <input type="date" class="form-control" id="PayDate" name="PayDate" value="@Model.PayDate?.ToString("yyyy-MM-dd") ?? string.Empty" required>
+    </div>
+
+    <div class="form-group">
+        <label for="Remarks">Remarks</label>
+        <textarea class="form-control" id="Remarks" name="Remarks">@Model.Remarks</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+

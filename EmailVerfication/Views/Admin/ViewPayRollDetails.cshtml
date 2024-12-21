@@ -1,0 +1,36 @@
+﻿@model EmailVerification.Models.PayRoll
+
+@{
+    ViewData["Title"] = "PayRoll Details for " + (Model.User?.FullName ?? "Unknown User");
+}
+
+<h2>PayRoll Details for @Model.User?.FullName ?? "Unknown User"</h2>
+
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <tr>
+            <th>Basic Salary</th>
+            <td>@Model.BasicSalary</td>
+        </tr>
+        <tr>
+            <th>Bonus</th>
+            <td>@Model.Bonus</td>
+        </tr>
+        <tr>
+            <th>Deductions</th>
+            <td>@Model.Deductions</td>
+        </tr>
+        <tr>
+            <th>Total Salary</th>
+            <td>@Model.TotalSalary</td>
+        </tr>
+        <tr>
+            <th>Pay Date</th>
+            <td>@(Model.PayDate.HasValue ? Model.PayDate.Value.ToString("yyyy-MM-dd") : "Not Available")</td>
+        </tr>
+        <tr>
+            <th>Remarks</th>
+            <td>@Model.Remarks</td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,51 @@
+﻿@model IEnumerable<EmailVerfication.Models.User>
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Admin Dashboard</h2>
+
+    <!-- Table -->
+    <table class="table table-striped table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Id</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Position</th>
+                <th>Salary</th>
+                <th>Date of Joining</th>
+                <th>Phone Number</th>
+                <th>Actions</th> <!-- For any actions like Edit/Delete -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.FullName</td>
+                    <td>@user.Email</td>
+                    <td>@user.Role</td>
+                    <td>@user.Position</td>
+                    <td>@user.Salary</td>
+                    <td>@user.DateOfJoining.ToString("MM/dd/yyyy")</td>
+                    <td>@user.PhoneNumber</td>
+
+
+                    <td>
+                        <!-- Link to Create PayRoll Page -->
+                        <a href="@Url.Action("CreatePayRoll", "Admin", new { userId = user.Id })" class="btn btn-primary btn-sm">Create PayRoll</a>
+                        <a href="@Url.Action("ViewPayRollDetails", "Admin", new { userId = user.Id })" class="btn btn-info btn-sm">View PayRoll Details</a>
+
+                        <a href="@Url.Action("Delete", "Admin", new { id = user.Id })" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

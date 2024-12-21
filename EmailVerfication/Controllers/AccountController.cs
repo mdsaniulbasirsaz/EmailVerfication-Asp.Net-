@@ -27,13 +27,29 @@ namespace EmailVerfication.Controllers
 		}
 
 		// Signup GET
-		public IActionResult Signup()
+		public IActionResult Signup(User user)
 		{
-			return View();
+			if (user == null)
+			{
+				// Handle the case where the user is null, which should not normally happen
+				return View();
+			}
+
+			if (ModelState.IsValid)
+			{
+				// Process the valid user data, e.g., save to database
+				return RedirectToAction("Success"); // Redirect on successful signup
+			}
+
+			return View(user);
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Signup(string FullName, string Email, string Password)
+		public async Task<IActionResult> Signup(string FullName, string Email, string Password, string Position, decimal? Salary, DateTime? DateOfJoining, string? Address = null,
+		string? PhoneNumber = null,
+		string? BankAccountNumber = null,
+		DateTime? DateOfBirth = null
+		)
 		{
 			if (ModelState.IsValid)
 			{
@@ -48,14 +64,30 @@ namespace EmailVerfication.Controllers
 				// Generate a verification token
 				var token = Guid.NewGuid().ToString();
 
+				// Assign default values if Salary or DateOfJoining are not provided
+				Salary = Salary ?? 0.00m; // Set default salary if not provided
+				DateOfJoining = DateOfJoining ?? DateTime.Now; // Set current date if not provided
+															   // Assign default values if fields are not provided
+				Address = Address ?? string.Empty; // Default to empty string
+				PhoneNumber = PhoneNumber ?? string.Empty; // Default to empty string
+				BankAccountNumber = BankAccountNumber ?? string.Empty; // Default to empty string
+				DateOfBirth = DateOfBirth ?? DateTime.MinValue;
 				// Create new user object
 				var user = new User
 				{
 					FullName = FullName,
 					Email = Email,
 					Password = Password,
+					Position = Position,
+					Address = Address,
+					Salary = Salary.Value, // Use the default or provided value
+					DateOfJoining = DateOfJoining.Value, // Use the default or provided value
 					VerificationToken = token,
-					IsVerified = false
+					IsVerified = false,
+					PhoneNumber = PhoneNumber,
+					BankAccountNumber = BankAccountNumber,
+					DateOfBirth = DateOfBirth,
+					Role = "Employee",
 				};
 
 				// Add user to the database
@@ -75,6 +107,8 @@ namespace EmailVerfication.Controllers
 			}
 			return View();
 		}
+
+
 
 		//Email Verification
 		public async Task<IActionResult> VerifyEmail(string token)
@@ -152,6 +186,72 @@ namespace EmailVerfication.Controllers
 
 			// Redirect to the login page (or home page)
 			return RedirectToAction("Login", "Account");
+		}
+		// GET: Account/UpdateProfile
+		public IActionResult UpdateProfile()
+		{
+			// Get the current user's email from the session
+			var userEmail = HttpContext.Session.GetString("UserEmail");
+			if (string.IsNullOrEmpty(userEmail))
+			{
+				return RedirectToAction("Login");
+			}
+
+			// Fetch the user details from the database
+			var user = _dbcontext.Users.FirstOrDefault(u => u.Email == userEmail);
+			if (user == null)
+			{
+				return RedirectToAction("Login");
+			}
+
+			// Return the view with the user data
+			return View(user);
+		}
+
+		// POST: Account/UpdateProfile
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> UpdateProfile(string FullName, string Email, string Position, decimal? Salary, DateTime? DateOfJoining,
+			string? Address, string? PhoneNumber, string? BankAccountNumber, DateTime? DateOfBirth)
+		{
+			// Check if the model state is valid
+			if (ModelState.IsValid)
+			{
+				// Get the current user's email from the session
+				var userEmail = HttpContext.Session.GetString("UserEmail");
+				if (string.IsNullOrEmpty(userEmail))
+				{
+					return RedirectToAction("Login");
+				}
+
+				// Fetch the user from the database
+				var user = _dbcontext.Users.FirstOrDefault(u => u.Email == userEmail);
+				if (user == null)
+				{
+					return RedirectToAction("Login");
+				}
+
+				// Update the user's profile
+				user.FullName = FullName ?? user.FullName;
+				user.Email = Email ?? user.Email;
+				user.Position = Position ?? user.Position;
+				user.Salary = Salary ?? user.Salary;
+				user.DateOfJoining = DateOfJoining ?? user.DateOfJoining;
+				user.Address = Address ?? user.Address;
+				user.PhoneNumber = PhoneNumber ?? user.PhoneNumber;
+				user.BankAccountNumber = BankAccountNumber ?? user.BankAccountNumber;
+				user.DateOfBirth = DateOfBirth ?? user.DateOfBirth;
+
+				// Save changes to the database
+				await _dbcontext.SaveChangesAsync();
+
+				// Optionally, display a success message and redirect to the profile page
+				TempData["SuccessMessage"] = "Profile updated successfully!";
+				return RedirectToAction("Profile");
+			}
+
+			// If the model state is invalid, return the form with validation errors
+			return View();
 		}
 
 	}

@@ -1,10 +1,64 @@
 ﻿@model EmailVerfication.Models.User
 
-<h2>Profile</h2>
-<div>
-    <h4>Name: @Model.FullName</h4>
-    <p>Email: @Model.Email</p>
-    <p>Status: @(Model.IsVerified ? "Verified" : "Not Verified")</p>
-    <a href="@Url.Action("Logout", "Account")">Logout</a>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Profile Information</h2>
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h4 class="card-title mb-0">Profile Details</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Name:</strong> @Model.FullName</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Email:</strong> @Model.Email</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Position:</strong> @Model.Position</p>
+                </div>
+                <div class="col-md-6">
+                    <p>
+                        <strong>Status:</strong> <span class="badge @(Model.IsVerified ? "bg-success" : "bg-danger")">
+                            @(Model.IsVerified ? "Verified" : "Not Verified")
+                        </span>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Salary:</strong> @Model.Salary.ToString("C")</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Phone Number:</strong> @(string.IsNullOrEmpty(Model.PhoneNumber) ? "N/A" : Model.PhoneNumber)</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Address:</strong> @(string.IsNullOrEmpty(Model.Address) ? "N/A" : Model.Address)</p>
+                </div>
+                <div class="col-md-6">
+                    <p>
+                        <strong>Date of Birth:</strong>
+                        @(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("dd-MM-yyyy") : "N/A")
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p>
+                        <strong>Bank Account Number:</strong>
+                        @(string.IsNullOrEmpty(Model.BankAccountNumber) ? "N/A" : Model.BankAccountNumber)
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Date of Joining:</strong> @Model.DateOfJoining.ToString("dd-MM-yyyy")</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <a href="@Url.Action("UpdateProfile", "Account")" class="btn btn-success">Update Profile</a>
+            <a href="@Url.Action("Logout", "Account")" class="btn btn-primary">Logout</a>
+            @if (Model.Role == "Admin")
+            {
+                <a href="@Url.Action("Dashboard", "Admin")" class="btn btn-warning">Dashboard</a>
+            }
 
+        </div>
+
+    </div>
 </div>

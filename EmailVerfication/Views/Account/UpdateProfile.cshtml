@@ -1,0 +1,84 @@
+﻿@model EmailVerfication.Models.User
+
+@{
+    ViewData["Title"] = "Update Profile";
+}
+
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<form asp-action="UpdateProfile" method="post">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header bg-primary">
+                        <h3 class="text-center text-light fw-bold">Update Your Profile</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="FullName">Full Name</label>
+                            <input type="text" class="form-control" id="FullName" name="FullName" value="@Model.FullName" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Email">Email</label>
+                            <input type="email" class="form-control" id="Email" name="Email" value="@Model.Email" readonly />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Position">Position</label>
+                            <input type="text" class="form-control" id="Position" name="Position" value="@Model.Position" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Salary">Salary</label>
+                            <input type="number" step="0.01" class="form-control" id="Salary" name="Salary" value="@Model.Salary.ToString("0.00")" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="DateOfJoining">Date of Joining</label>
+                            <input type="date" class="form-control" id="DateOfJoining" name="DateOfJoining" value="@Model.DateOfJoining.ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Address">Address</label>
+                            <textarea class="form-control" id="Address" name="Address">@Model.Address</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="PhoneNumber">Phone Number</label>
+                            <input type="text" class="form-control" id="PhoneNumber" name="PhoneNumber" value="@Model.PhoneNumber" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="BankAccountNumber">Bank Account Number</label>
+                            <input type="text" class="form-control" id="BankAccountNumber" name="BankAccountNumber" value="@Model.BankAccountNumber" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="DateOfBirth">Date of Birth</label>
+                            <input type="date" class="form-control" id="DateOfBirth" name="DateOfBirth" value="@(Model.DateOfBirth?.ToString("yyyy-MM-dd") ?? "")" />
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary mt-3">
+                                <i class="fas fa-user-edit"></i> Update Profile
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<p class="text-center mt-3">
+    <a asp-action="Profile" class="btn btn-secondary">Back to Profile</a>
+</p>
