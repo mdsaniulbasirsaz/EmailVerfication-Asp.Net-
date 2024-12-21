@@ -99,19 +99,28 @@ namespace EmailVerification.Controllers
 			return View(payRoll);  // Return the payroll details view
 		}
 
-		// Optional: Delete action for user
-		public IActionResult Delete(int userId)
-		{
-			var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-			if (user == null)
-			{
-				return NotFound(); // If user is not found
-			}
+		// Action to delete a user
+public IActionResult Delete(int userId)
+{
+    var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+    if (user != null)
+    {
+        // Remove the user from the database
+        _context.Users.Remove(user);
+        _context.SaveChanges();  // Save changes to the database
 
-			_context.Users.Remove(user);
-			_context.SaveChanges();
+        // Set a success message to be displayed in the view
+        TempData["SuccessMessage"] = "User deleted successfully!";
+    }
+    else
+    {
+        // If user not found, set an error message
+        TempData["ErrorMessage"] = "User not found!";
+    }
 
-			return RedirectToAction("Index"); // Redirect to the user list after deletion
-		}
+    // Redirect to the Dashboard after deletion
+    return RedirectToAction("Dashboard");  // Redirect to the correct dashboard action
+}
+
 	}
 }

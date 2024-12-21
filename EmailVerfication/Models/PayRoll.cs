@@ -12,7 +12,7 @@ namespace EmailVerification.Models
 		public int Id { get; set; }  // This should correspond to the User's Id
 
 		// Navigation property to the User model
-		public User User { get; set; }
+		public User? User { get; set; }
 
 		[Required]
 		public decimal BasicSalary { get; set; }
