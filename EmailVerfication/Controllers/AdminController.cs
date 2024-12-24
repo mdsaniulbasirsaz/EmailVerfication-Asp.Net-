@@ -40,45 +40,46 @@ namespace EmailVerification.Controllers
 			// Initialize a new PayRoll object with the user's data
 			var payRoll = new PayRoll
 			{
+				Id = userId, // Link to the user's Id
 				User = user, // Attach the retrieved user to the PayRoll
-				Id = userId
+				BasicSalary = user.Salary // Populate default salary from the user
 			};
 
 			// Return the view with the PayRoll object
 			return View(payRoll);
 		}
 
+		// POST: Save PayRoll
 		[HttpPost]
 		public IActionResult CreatePayRoll(PayRoll payRoll)
 		{
-			// Check if the model is valid (ensures all required fields are filled)
+			// Validate the model
 			if (ModelState.IsValid)
 			{
-				// Ensure all fields are converted to decimal for calculation
-				decimal basicSalary = payRoll.BasicSalary; // 0m is decimal zero
-				decimal bonus = payRoll.Bonus ?? 0m; // Use 0 if Bonus is null
-				decimal deductions = payRoll.Deductions ?? 0m; // Use 0 if Deductions is null
-
-				// Calculate the TotalSalary: basicSalary + bonus - deductions
-				payRoll.TotalSalary = basicSalary + bonus - deductions;
-
-				// Attach the userId to ensure we link the payroll to the correct user
-				var user = _context.Users.FirstOrDefault(u => u.Id == payRoll.User.Id);
+				// Retrieve the user from the database to link the payroll
+				var user = _context.Users.FirstOrDefault(u => u.Id == payRoll.Id);
 				if (user == null)
 				{
-					// Return NotFound if the user does not exist in the database
 					return NotFound();
 				}
 
-				// Save the payroll data to the database
-				_context.PayRolls.Add(payRoll);
-				_context.SaveChanges(); // Persist the changes to the database
+				// Link the user to the payroll
+				payRoll.User = user;
 
-				// Redirect to the Admin Index page after saving
-				return RedirectToAction("Index", "Admin");
+				// Calculate the total salary
+				payRoll.TotalSalary = payRoll.BasicSalary
+									  + (payRoll.Bonus ?? 0m)
+									  - (payRoll.Deductions ?? 0m);
+
+				// Add the payroll to the database
+				_context.PayRolls.Add(payRoll);
+				_context.SaveChanges();
+
+				// Redirect to the index or any other page
+				return RedirectToAction("Dashboard", "Admin");
 			}
 
-			// If the model is invalid, return the view with validation errors
+			// If model validation fails, return the same view
 			return View(payRoll);
 		}
 
@@ -93,34 +94,35 @@ namespace EmailVerification.Controllers
 
 			if (payRoll == null)
 			{
-				return NotFound();  // Return 404 if no payroll record is found
+				TempData["Message"] = "No payroll record found for the specified user."; // Set message
+				return RedirectToAction("Dashboard", "Admin");
 			}
 
 			return View(payRoll);  // Return the payroll details view
 		}
 
-		// Action to delete a user
-public IActionResult Delete(int userId)
-{
-    var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-    if (user != null)
-    {
-        // Remove the user from the database
-        _context.Users.Remove(user);
-        _context.SaveChanges();  // Save changes to the database
+			// Action to delete a user
+		public IActionResult Delete(int userId)
+		{
+			var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+			if (user != null)
+			{
+				// Remove the user from the database
+				_context.Users.Remove(user);
+				_context.SaveChanges();  // Save changes to the database
 
-        // Set a success message to be displayed in the view
-        TempData["SuccessMessage"] = "User deleted successfully!";
-    }
-    else
-    {
-        // If user not found, set an error message
-        TempData["ErrorMessage"] = "User not found!";
-    }
+				// Set a success message to be displayed in the view
+				TempData["SuccessMessage"] = "User deleted successfully!";
+			}
+			else
+			{
+				// If user not found, set an error message
+				TempData["ErrorMessage"] = "User not found!";
+			}
 
-    // Redirect to the Dashboard after deletion
-    return RedirectToAction("Dashboard");  // Redirect to the correct dashboard action
-}
+			// Redirect to the Dashboard after deletion
+			return RedirectToAction("Dashboard");  // Redirect to the correct dashboard action
+		}
 
 	}
 }

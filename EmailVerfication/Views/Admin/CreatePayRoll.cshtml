@@ -6,37 +6,72 @@
 
 <h2>Create PayRoll for @(Model.User?.FullName ?? "User not found")</h2>
 
-<form method="post">
+<form asp-action="CreatePayRoll" method="post">
+    <!-- Hidden field to include the User Id -->
+    <input type="hidden" asp-for="Id" />
+
     <div class="form-group">
-        <label for="BasicSalary">Basic Salary</label>
-        <input type="number" class="form-control" id="BasicSalary" name="BasicSalary" value="@Model.BasicSalary" required>
+        <label asp-for="BasicSalary"></label>
+        <input asp-for="BasicSalary" class="form-control" id="BasicSalary" type="number" step="0.01" required />
+        <span asp-validation-for="BasicSalary" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="Bonus">Bonus</label>
-        <input type="number" class="form-control" id="Bonus" name="Bonus" value="@Model.Bonus">
+        <label asp-for="Bonus"></label>
+        <input asp-for="Bonus" class="form-control" id="Bonus" type="number" step="0.01" />
+        <span asp-validation-for="Bonus" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="Deductions">Deductions</label>
-        <input type="number" class="form-control" id="Deductions" name="Deductions" value="@Model.Deductions">
+        <label asp-for="Deductions"></label>
+        <input asp-for="Deductions" class="form-control" id="Deductions" type="number" step="0.01" />
+        <span asp-validation-for="Deductions" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="TotalSalary">Total Salary</label>
-        <input type="number" class="form-control" id="TotalSalary" name="TotalSalary" value="@Model.TotalSalary" required>
+        <label asp-for="TotalSalary"></label>
+        <input asp-for="TotalSalary" class="form-control" id="TotalSalary" type="number" step="0.01" readonly />
+        <span asp-validation-for="TotalSalary" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="PayDate">Pay Date</label>
-        <input type="date" class="form-control" id="PayDate" name="PayDate" value="@Model.PayDate?.ToString("yyyy-MM-dd") ?? string.Empty" required>
+        <label asp-for="PayDate"></label>
+        <input asp-for="PayDate" class="form-control" type="date" required />
+        <span asp-validation-for="PayDate" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="Remarks">Remarks</label>
-        <textarea class="form-control" id="Remarks" name="Remarks">@Model.Remarks</textarea>
+        <label asp-for="Remarks"></label>
+        <textarea asp-for="Remarks" class="form-control"></textarea>
+        <span asp-validation-for="Remarks" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PayStatus"></label>
+        <select asp-for="PayStatus" class="form-control">
+            <option value="Pending">Pending</option>
+            <option value="Paid">Paid</option>
+        </select>
+        <span asp-validation-for="PayStatus" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Save</button>
 </form>
 
+@section Scripts {
+    <script>
+        document.addEventListener("input", function () {
+            const basicSalary = parseFloat(document.getElementById("BasicSalary").value) || 0;
+            const bonus = parseFloat(document.getElementById("Bonus").value) || 0;
+            const deductions = parseFloat(document.getElementById("Deductions").value) || 0;
+
+            // Calculate TotalSalary
+            const totalSalary = basicSalary + bonus - deductions;
+
+            // Set the TotalSalary input value
+            document.getElementById("TotalSalary").value = totalSalary.toFixed(2);
+        });
+    </script>
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
